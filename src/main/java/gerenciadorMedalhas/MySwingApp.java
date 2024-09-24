@@ -1,6 +1,9 @@
+package gerenciadorMedalhas;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class MySwingApp {
 
@@ -80,8 +83,17 @@ public class MySwingApp {
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel label = new JLabel("Esta é a página de " + titulo, SwingConstants.CENTER);
-        label.setBounds(50, 100, 300, 30);
+        label.setBounds(50, 20, 300, 30);
         newFrame.add(label);
+
+        // Busca paises
+        PaisService paisService = new PaisService();
+        List<String> paises = paisService.fetchPaises();
+
+        // Cria JComboBox para exibir os paises
+        JComboBox<String> paisesComboBox = new JComboBox<>(paises.toArray(new String[0]));
+        paisesComboBox.setBounds(100, 60, 200, 30);
+        newFrame.add(paisesComboBox);
 
         // Adiciona o botão "Voltar ao Menu Principal"
         JButton btnVoltar = new JButton("Voltar ao Menu Principal");
@@ -98,4 +110,5 @@ public class MySwingApp {
         newFrame.setLayout(null);
         newFrame.setVisible(true);
     }
+
 }

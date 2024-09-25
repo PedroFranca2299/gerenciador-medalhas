@@ -1,6 +1,6 @@
 Para rodar o projeto é necessário:
 
-- Instalar uma IDE apropriada (Indico intellij community edition https://www.jetbrains.com/idea/download/?section=mac)
+- Instalar uma IDE apropriada (Indico intellij community edition https://www.jetbrains.com/idea/download/)
 - Instalar o Java SDK (estou usando o 22)
 - Inserir um arquivo .env na raiz do projeto com a seguinte estrutura:
 

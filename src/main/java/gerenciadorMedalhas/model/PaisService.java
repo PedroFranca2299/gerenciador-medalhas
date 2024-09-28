@@ -1,4 +1,6 @@
-package gerenciadorMedalhas;
+package gerenciadorMedalhas.model;
+
+import gerenciadorMedalhas.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

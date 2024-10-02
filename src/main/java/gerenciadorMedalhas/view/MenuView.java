@@ -1,6 +1,7 @@
 package gerenciadorMedalhas.view;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class MenuView extends JFrame {
     private JButton btnRankingGeral;
 
     public MenuView() {
-        // Configura o frame principal
+        // Configura o menu principal
         setTitle("Menu Principal");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,26 +51,37 @@ public class MenuView extends JFrame {
         btnEscolherModalidades.addActionListener(listener);
     }
 
-    // Método para exibir um novo frame
-    public void showNewFrame(String titulo, List<String> paises) {
+    // metodo para exibir um novo frame com checkboxes
+    public void showCheckboxFrame(String titulo, List<String> opcoes) {
         JFrame newFrame = new JFrame(titulo);
         newFrame.setSize(400, 300);
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        newFrame.setLayout(null);
 
-        JLabel label = new JLabel("Esta é a página de " + titulo, SwingConstants.CENTER);
-        label.setBounds(50, 20, 300, 30);
+        // setando para exibir em colunas para ficar melhor a vizualização
+        int maxCheckboxesPorColuna = 10;
+        int numColunas = (int) Math.ceil((double) opcoes.size() / maxCheckboxesPorColuna);
+
+        // setado para as colunas possuirem 10 itens por coluna
+        newFrame.setLayout(new GridLayout(maxCheckboxesPorColuna + 2, numColunas));
+
+        JLabel label = new JLabel("Escolha as opções:", SwingConstants.CENTER);
         newFrame.add(label);
 
-        JComboBox<String> paisesComboBox = new JComboBox<>(paises.toArray(new String[0]));
-        paisesComboBox.setBounds(100, 60, 200, 30);
-        newFrame.add(paisesComboBox);
+        // cria os checkbox
+        for (int i = 0; i < opcoes.size(); i++) {
+            JCheckBox checkbox = new JCheckBox(opcoes.get(i));
+            newFrame.add(checkbox);
+        }
+
+        // adiciona botões vazios para preencher o layout, se necessário
+        for (int i = opcoes.size(); i < maxCheckboxesPorColuna * numColunas; i++) {
+            newFrame.add(new JLabel());
+        }
 
         JButton btnVoltar = new JButton("Voltar ao Menu Principal");
-        btnVoltar.setBounds(100, 200, 200, 30);
         btnVoltar.addActionListener(e -> {
             newFrame.dispose();
-            this.setVisible(true); // Retorna ao menu principal
+            this.setVisible(true); // retorna ao menu principal
         });
         newFrame.add(btnVoltar);
 

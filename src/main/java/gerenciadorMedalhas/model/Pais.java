@@ -1,18 +1,15 @@
 package gerenciadorMedalhas.model;
 
-public class Modalidade {
+public class Pais {
     private String nome;
-    //private String descricao;
 
-    public Modalidade(String nome) {
+    // Construtor
+    public Pais(String nome) {
         this.nome = nome;
-        //this.descricao = descricao;
     }
 
-    //retorna nome
+    // retorna o nome dos paises
     public String getNome() {
-
         return nome;
-
     }
 }

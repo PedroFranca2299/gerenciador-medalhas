@@ -30,7 +30,7 @@ public class MenuController {
     }
 
     private void escolherParticipantes() {
-        List<Pais> paises = paisService.fetchPaises(); // Método para buscar países
+        List<Pais> paises = paisService.fetchPaises(); // Metodo para buscar países
         List<String> paisesNomes = new ArrayList<>();
         List<Integer> paisesIds = new ArrayList<>();
 
@@ -43,13 +43,13 @@ public class MenuController {
     }
 
     private void escolherModalidades() {
-        List<Modalidade> modalidades = modalidadeService.fetchModalidades(); // Método para buscar modalidades
+        List<Modalidade> modalidades = modalidadeService.fetchModalidades(); // Metodo para buscar modalidades
         List<String> modalidadesNomes = new ArrayList<>();
         List<Integer> modalidadesIds = new ArrayList<>();
 
         for (Modalidade modalidade : modalidades) {
             modalidadesNomes.add(modalidade.getNome());
-            modalidadesIds.add(modalidade.getId()); // Supondo que você tenha um método getId()
+            modalidadesIds.add(modalidade.getId()); // Supondo que você tenha um metodo getId()
         }
 
         menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds);

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static final Dotenv dotenv = Dotenv.load();
 
+    // Usar as chaves corretas definidas no .env
     private static final String URL = dotenv.get("DB_URL");
     private static final String USER = dotenv.get("DB_USERNAME");
     private static final String PASSWORD = dotenv.get("DB_PASSWORD");

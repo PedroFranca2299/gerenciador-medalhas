@@ -7,10 +7,9 @@ import gerenciadorMedalhas.model.ModalidadeService;
 import gerenciadorMedalhas.view.MenuView;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuController {
     private PaisService paisService;
@@ -32,13 +31,27 @@ public class MenuController {
 
     private void escolherParticipantes() {
         List<Pais> paises = paisService.fetchPaises(); // Método para buscar países
-        List<String> paisesNomes = paises.stream().map(Pais::getNome).collect(Collectors.toList());
-        menuView.showCheckboxFrame("Escolher Participantes", paisesNomes);
+        List<String> paisesNomes = new ArrayList<>();
+        List<Integer> paisesIds = new ArrayList<>();
+
+        for (Pais pais : paises) {
+            paisesNomes.add(pais.getNome());
+            paisesIds.add(pais.getId());
+        }
+
+        menuView.showCheckboxFrame("Escolher Participantes", paisesNomes, paisesIds);
     }
 
     private void escolherModalidades() {
         List<Modalidade> modalidades = modalidadeService.fetchModalidades(); // Método para buscar modalidades
-        List<String> modalidadesNomes = modalidades.stream().map(Modalidade::getNome).collect(Collectors.toList());
-        menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes);
+        List<String> modalidadesNomes = new ArrayList<>();
+        List<Integer> modalidadesIds = new ArrayList<>();
+
+        for (Modalidade modalidade : modalidades) {
+            modalidadesNomes.add(modalidade.getNome());
+            modalidadesIds.add(modalidade.getId()); // Supondo que você tenha um método getId()
+        }
+
+        menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds);
     }
 }

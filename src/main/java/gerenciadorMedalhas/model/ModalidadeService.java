@@ -12,16 +12,17 @@ import java.util.List;
 public class ModalidadeService {
     public List<Modalidade> fetchModalidades() {
         List<Modalidade> modalidades = new ArrayList<>();
-        String query = "SELECT nome FROM modalidades";
+        String query = "SELECT id, nome FROM modalidades"; // Inclui o id na consulta
 
-        //abre conexão com a banco para buscar o pais
+        // Abre conexão com o banco para buscar as modalidades
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
+                int id = rs.getInt("id"); // Obtém o id
                 String nome = rs.getString("nome");
-                modalidades.add(new Modalidade(nome)); // Apenas o nome
+                modalidades.add(new Modalidade(id, nome)); // Cria o objeto com id e nome
             }
         } catch (SQLException e) {
             e.printStackTrace();

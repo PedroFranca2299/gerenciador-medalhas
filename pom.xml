@@ -16,19 +16,29 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.mysql</groupId> <!-- Atualizado -->
-            <artifactId>mysql-connector-j</artifactId> <!-- Atualizado -->
-            <version>8.0.33</version> <!-- Verifique se esta é a versão mais recente -->
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
         </dependency>
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
-            <version>3.0.0</version> <!-- Verifique se esta é a versão mais recente -->
+            <version>3.0.0</version>
         </dependency>
+        <!-- Se você precisar de outras bibliotecas, adicione aqui -->
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>22</source>
+                    <target>22</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

@@ -76,7 +76,6 @@ public class MenuView extends JFrame {
             checkbox.putClientProperty("id", id); // Armazenando o ID no checkbox
             checkboxes.add(checkbox);
             panel.add(checkbox);
-            System.out.println("Checkbox criado: " + opcao + " com ID: " + id); // Debug
         }
 
         JScrollPane scrollPane = new JScrollPane(panel);
@@ -102,43 +101,29 @@ public class MenuView extends JFrame {
     // Metodo para salvar os dados selecionados
     private void salvar(JFrame frame, List<JCheckBox> checkboxes) {
         List<Integer> idsPaises = new ArrayList<>();
-        List<Integer> idsModalidades = new ArrayList<>();
 
-        // Coletar os IDs selecionados
+        // Coletar os IDs dos países selecionados
         for (JCheckBox checkbox : checkboxes) {
             if (checkbox.isSelected()) {
                 Integer id = (Integer) checkbox.getClientProperty("id"); // Obtendo o ID
-                System.out.println("Checkbox selecionado: " + checkbox.getText() + " com ID: " + id); // Debug
-
-                if (checkbox.getText().toLowerCase().contains("participante")) {
-                    idsPaises.add(id);
-                } else if (checkbox.getText().toLowerCase().contains("modalidade")) {
-                    idsModalidades.add(id);
-                }
+                // Adiciona o ID do país à lista
+                idsPaises.add(id);
             }
         }
 
-        // Exibir IDs
-        System.out.println("IDs dos Países selecionados: " + idsPaises);
-        System.out.println("IDs das Modalidades selecionadas: " + idsModalidades);
-
-        // Inserir dados no banco de dados
-        String sql = "INSERT INTO paises_modalidade (id_pais, id_modalidade) VALUES (?, ?)";
+        // Comando SQL para atualizar a tabela paises
+        String sql = "UPDATE paises SET participando = 1 WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             for (Integer idPais : idsPaises) {
-                for (Integer idModalidade : idsModalidades) {
-                    stmt.setInt(1, idPais);
-                    stmt.setInt(2, idModalidade);
-                    stmt.addBatch(); // Adiciona ao batch
-                }
+                stmt.setInt(1, idPais);
+                stmt.addBatch(); // Adiciona ao batch
             }
             int[] resultados = stmt.executeBatch(); // Executa o batch
-            System.out.println("Comandos executados: " + resultados.length);
 
-            // Mostrar resultado da inserção
+            // Mostrar resultado da atualização
             JOptionPane.showMessageDialog(frame, "Dados salvos com sucesso!");
         } catch (SQLException e) {
             e.printStackTrace();

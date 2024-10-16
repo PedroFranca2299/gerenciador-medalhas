@@ -84,10 +84,7 @@ public class MenuView extends JFrame {
         // Painel para os botões
         JPanel buttonPanel = new JPanel();
         JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.addActionListener(e -> {
-            newFrame.dispose();
-            this.setVisible(true);
-        });
+        btnVoltar.addActionListener(e -> voltar(newFrame, checkboxes));
         buttonPanel.add(btnVoltar);
 
         JButton btnSalvar = new JButton("Salvar");
@@ -106,9 +103,14 @@ public class MenuView extends JFrame {
         for (JCheckBox checkbox : checkboxes) {
             if (checkbox.isSelected()) {
                 Integer id = (Integer) checkbox.getClientProperty("id"); // Obtendo o ID
-                // Adiciona o ID do país à lista
                 idsPaises.add(id);
             }
+        }
+
+        // Verifica o número de checkboxes selecionados
+        if (idsPaises.size() < 16 || idsPaises.size() > 16) {
+            JOptionPane.showMessageDialog(frame, "É necessário selecionar exatamente 16 opções para salvar.");
+            return; // Retorna para evitar continuar o processo de salvamento
         }
 
         // Comando SQL para atualizar a tabela paises
@@ -129,5 +131,23 @@ public class MenuView extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Erro ao salvar dados: " + e.getMessage());
         }
+    }
+
+    // Metodo para voltar ao menu principal
+    private void voltar(JFrame frame, List<JCheckBox> checkboxes) {
+        boolean algumSelecionado = checkboxes.stream().anyMatch(JCheckBox::isSelected);
+
+        if (algumSelecionado) {
+            int resposta = JOptionPane.showConfirmDialog(frame,
+                    "Você tem opções selecionadas que não foram salvas. Deseja sair sem salvar?",
+                    "Confirmar saída",
+                    JOptionPane.YES_NO_OPTION);
+            if (resposta == JOptionPane.NO_OPTION) {
+                return; // Não sai, apenas retorna
+            }
+        }
+
+        frame.dispose();
+        this.setVisible(true);
     }
 }

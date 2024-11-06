@@ -19,7 +19,8 @@ public class MenuView extends JFrame {
     private JButton btnInformarResultados;
     private JButton btnRankingModalidades;
     private JButton btnRankingGeral;
-    private boolean changesSaved = true; // Flag to track if changes have been saved
+    private boolean changesSaved = true; // Flag para monitorar se as mudanças foram salvas
+    private JLabel contadorLabel; // Label para o contador
 
     public MenuView() {
         setTitle("Menu Principal");
@@ -55,7 +56,7 @@ public class MenuView extends JFrame {
 
     public void showCheckboxFrame(String titulo, List<String> opcoes, List<Integer> ids) {
         JFrame newFrame = new JFrame(titulo);
-        newFrame.setSize(400, 300);
+        newFrame.setSize(400, 400);
         newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         newFrame.setLayout(new BorderLayout());
         newFrame.setLocationRelativeTo(null);
@@ -67,6 +68,15 @@ public class MenuView extends JFrame {
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
         List<JCheckBox> checkboxes = new ArrayList<>();
+
+        // Inicializa a label do contador com 0/16
+        contadorLabel = new JLabel("Selecionados: 0/16", SwingConstants.CENTER);
+
+        // Adiciona o contador logo abaixo da lista de checkboxes
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(new JScrollPane(panel), BorderLayout.CENTER);
+        centerPanel.add(contadorLabel, BorderLayout.SOUTH);
+        newFrame.add(centerPanel, BorderLayout.CENTER);
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT id, participando FROM paises WHERE id = ?")) {
@@ -85,12 +95,10 @@ public class MenuView extends JFrame {
                     checkbox.setSelected(rs.getInt("participando") == 1);
                 }
 
-                checkbox.addActionListener(e -> {
-                    changesSaved = false;
-                });
-
                 checkboxes.add(checkbox);
                 panel.add(checkbox);
+
+                checkbox.addActionListener(e -> atualizarContador(checkboxes));
 
                 rs.close();
             }
@@ -98,9 +106,6 @@ public class MenuView extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(newFrame, "Erro ao carregar dados do banco: " + e.getMessage());
         }
-
-        JScrollPane scrollPane = new JScrollPane(panel);
-        newFrame.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
         JButton btnVoltar = new JButton("Voltar");
@@ -113,6 +118,13 @@ public class MenuView extends JFrame {
 
         newFrame.add(buttonPanel, BorderLayout.SOUTH);
         newFrame.setVisible(true);
+
+        atualizarContador(checkboxes); // Atualiza o contador na inicialização
+    }
+
+    private void atualizarContador(List<JCheckBox> checkboxes) {
+        long selecionados = checkboxes.stream().filter(JCheckBox::isSelected).count();
+        contadorLabel.setText("Selecionados: " + selecionados + "/16");
     }
 
     private void salvar(JFrame frame, List<JCheckBox> checkboxes) {

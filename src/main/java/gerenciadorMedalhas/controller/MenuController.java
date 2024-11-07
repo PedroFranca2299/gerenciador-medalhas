@@ -50,7 +50,7 @@ public class MenuController {
         menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds, false);
     }
 }
-            modalidadesIds.add(modalidade.getId()); // Supondo que você tenha um metodo getId()
+            modalidadesIds.add(modalidade.getId());
         }
 
         menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds);

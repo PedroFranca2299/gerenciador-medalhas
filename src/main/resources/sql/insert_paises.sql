@@ -71,4 +71,3 @@ INSERT INTO modalidades (nome) VALUES
 ('Escalada Esportiva'),
 ('Surfe'),
 ('Skate');
-

@@ -54,7 +54,7 @@ public class MenuView extends JFrame {
         btnEscolherModalidades.addActionListener(listener);
     }
 
-    public void showCheckboxFrame(String titulo, List<String> opcoes, List<Integer> ids) {
+    public void showCheckboxFrame(String titulo, List<String> opcoes, List<Integer> ids, boolean isPais) {
         JFrame newFrame = new JFrame(titulo);
         newFrame.setSize(400, 400);
         newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -79,7 +79,7 @@ public class MenuView extends JFrame {
         newFrame.add(centerPanel, BorderLayout.CENTER);
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT id, participando FROM paises WHERE id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT id, " + (isPais ? "participando" : "ativo") + " FROM " + (isPais ? "paises" : "modalidades") + " WHERE id = ?")) {
 
             for (int i = 0; i < opcoes.size(); i++) {
                 String opcao = opcoes.get(i);
@@ -92,7 +92,7 @@ public class MenuView extends JFrame {
                 checkbox.putClientProperty("id", id);
 
                 if (rs.next()) {
-                    checkbox.setSelected(rs.getInt("participando") == 1);
+                    checkbox.setSelected(rs.getInt(isPais ? "participando" : "ativo") == 1);
                 }
 
                 checkboxes.add(checkbox);
@@ -109,11 +109,11 @@ public class MenuView extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         JButton btnVoltar = new JButton("Voltar");
-        btnVoltar.addActionListener(e -> voltar(newFrame, checkboxes));
+        btnVoltar.addActionListener(e -> voltar(newFrame, checkboxes, isPais));
         buttonPanel.add(btnVoltar);
 
         JButton btnSalvar = new JButton("Salvar");
-        btnSalvar.addActionListener(e -> salvar(newFrame, checkboxes));
+        btnSalvar.addActionListener(e -> salvar(newFrame, checkboxes, isPais));
         buttonPanel.add(btnSalvar);
 
         newFrame.add(buttonPanel, BorderLayout.SOUTH);
@@ -127,29 +127,29 @@ public class MenuView extends JFrame {
         contadorLabel.setText("Selecionados: " + selecionados + "/16");
     }
 
-    private void salvar(JFrame frame, List<JCheckBox> checkboxes) {
-        List<Integer> idsPaises = new ArrayList<>();
+    private void salvar(JFrame frame, List<JCheckBox> checkboxes, boolean isPais) {
+        List<Integer> idsSelecionados = new ArrayList<>();
 
         for (JCheckBox checkbox : checkboxes) {
             if (checkbox.isSelected()) {
                 Integer id = (Integer) checkbox.getClientProperty("id");
-                idsPaises.add(id);
+                idsSelecionados.add(id);
             }
         }
 
-        if (idsPaises.size() != 16) {
+        if (idsSelecionados.size() != 16) {
             JOptionPane.showMessageDialog(frame, "É necessário selecionar exatamente 16 opções para salvar.");
             return;
         }
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            try (PreparedStatement resetStmt = conn.prepareStatement("UPDATE paises SET participando = 0")) {
+            try (PreparedStatement resetStmt = conn.prepareStatement("UPDATE " + (isPais ? "paises" : "modalidades") + " SET " + (isPais ? "participando" : "ativo") + " = 0")) {
                 resetStmt.executeUpdate();
             }
 
-            try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE paises SET participando = 1 WHERE id = ?")) {
-                for (Integer idPais : idsPaises) {
-                    updateStmt.setInt(1, idPais);
+            try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE " + (isPais ? "paises" : "modalidades") + " SET " + (isPais ? "participando" : "ativo") + " = 1 WHERE id = ?")) {
+                for (Integer id : idsSelecionados) {
+                    updateStmt.setInt(1, id);
                     updateStmt.addBatch();
                 }
                 updateStmt.executeBatch();
@@ -163,7 +163,7 @@ public class MenuView extends JFrame {
         }
     }
 
-    private void voltar(JFrame frame, List<JCheckBox> checkboxes) {
+    private void voltar(JFrame frame, List<JCheckBox> checkboxes, boolean isPais) {
         if (!changesSaved) {
             int resposta = JOptionPane.showConfirmDialog(frame,
                     "Você tem opções selecionadas que não foram salvas. Deseja sair sem salvar?",

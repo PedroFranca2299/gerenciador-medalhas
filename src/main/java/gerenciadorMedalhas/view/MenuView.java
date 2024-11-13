@@ -19,8 +19,8 @@ public class MenuView extends JFrame {
     private JButton btnInformarResultados;
     private JButton btnRankingModalidades;
     private JButton btnRankingGeral;
-    private boolean changesSaved = true; // Flag para monitorar se as mudanças foram salvas
-    private JLabel contadorLabel; // Label para o contador
+    private boolean changesSaved = true;
+    private JLabel contadorLabel;
 
     public MenuView() {
         setTitle("Menu Principal");
@@ -69,14 +69,18 @@ public class MenuView extends JFrame {
         JPanel panel = new JPanel(new GridLayout(0, 1));
         List<JCheckBox> checkboxes = new ArrayList<>();
 
-        // Inicializa a label do contador com 0/16
-        contadorLabel = new JLabel("Selecionados: 0/16", SwingConstants.CENTER);
+        if (isPais) {
+            contadorLabel = new JLabel("Selecionados: 0/16", SwingConstants.CENTER);
 
-        // Adiciona o contador logo abaixo da lista de checkboxes
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(new JScrollPane(panel), BorderLayout.CENTER);
-        centerPanel.add(contadorLabel, BorderLayout.SOUTH);
-        newFrame.add(centerPanel, BorderLayout.CENTER);
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(new JScrollPane(panel), BorderLayout.CENTER);
+            centerPanel.add(contadorLabel, BorderLayout.SOUTH);
+            newFrame.add(centerPanel, BorderLayout.CENTER);
+        } else {
+            JPanel centerPanel = new JPanel(new BorderLayout());
+            centerPanel.add(new JScrollPane(panel), BorderLayout.CENTER);
+            newFrame.add(centerPanel, BorderLayout.CENTER);
+        }
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT id, " + (isPais ? "participando" : "ativo") + " FROM " + (isPais ? "paises" : "modalidades") + " WHERE id = ?")) {
@@ -98,7 +102,11 @@ public class MenuView extends JFrame {
                 checkboxes.add(checkbox);
                 panel.add(checkbox);
 
-                checkbox.addActionListener(e -> atualizarContador(checkboxes));
+                checkbox.addActionListener(e -> {
+                    if (isPais) {
+                        atualizarContador(checkboxes);
+                    }
+                });
 
                 rs.close();
             }
@@ -119,7 +127,9 @@ public class MenuView extends JFrame {
         newFrame.add(buttonPanel, BorderLayout.SOUTH);
         newFrame.setVisible(true);
 
-        atualizarContador(checkboxes); // Atualiza o contador na inicialização
+        if (isPais) {
+            atualizarContador(checkboxes);
+        }
     }
 
     private void atualizarContador(List<JCheckBox> checkboxes) {
@@ -137,9 +147,11 @@ public class MenuView extends JFrame {
             }
         }
 
-        if (idsSelecionados.size() != 16) {
-            JOptionPane.showMessageDialog(frame, "É necessário selecionar exatamente 16 opções para salvar.");
-            return;
+        if (isPais) {
+            if (idsSelecionados.size() != 16) {
+                JOptionPane.showMessageDialog(frame, "É necessário selecionar exatamente 16 opções para salvar.");
+                return;
+            }
         }
 
         try (Connection conn = DatabaseConnection.getConnection()) {

@@ -50,9 +50,3 @@ public class MenuController {
         menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds, false);
     }
 }
-            modalidadesIds.add(modalidade.getId());
-        }
-
-        menuView.showCheckboxFrame("Escolher Modalidades", modalidadesNomes, modalidadesIds);
-    }
-}

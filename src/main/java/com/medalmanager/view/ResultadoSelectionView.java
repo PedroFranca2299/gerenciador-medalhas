@@ -4,6 +4,7 @@ import com.medalmanager.model.dto.CountryDTO;
 import com.medalmanager.model.dto.ModalityDTO;
 import com.medalmanager.model.dto.EtapaDTO;
 import com.medalmanager.model.dto.ResultadoDTO;
+import com.medalmanager.model.dto.ParticipacaoResultadoDTO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,6 +47,57 @@ public class ResultadoSelectionView extends JDialog {
         addParticipanteRow();
     }
 
+    private void setupLayout() {
+        setLayout(new BorderLayout(10, 10));
+
+        // Painel superior para seleção de modalidade e etapa
+        JPanel topPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+
+        topPanel.add(new JLabel("Modalidade:"));
+        topPanel.add(modalidadeCombo);
+        topPanel.add(new JLabel("Etapa:"));
+        topPanel.add(etapaCombo);
+
+        // Painel central para participantes
+        JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        JLabel participantesLabel = new JLabel("Participantes:");
+        participantesLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        centerPanel.add(participantesLabel, BorderLayout.NORTH);
+
+        // Painel de scroll para os participantes
+        JScrollPane scrollPane = new JScrollPane(participantesPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Botão de adicionar participante
+        JPanel addButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        addButtonPanel.add(btnAddParticipante);
+        centerPanel.add(addButtonPanel, BorderLayout.SOUTH);
+
+        // Painel inferior para botões de ação
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        bottomPanel.add(btnSave);
+        bottomPanel.add(btnCancel);
+
+        // Adiciona todos os painéis ao layout principal
+        add(topPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void setupDialog() {
+        setTitle("Registrar Resultado");
+        setModal(true);
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setMinimumSize(new Dimension(400, 300));
+    }
+
     private void addParticipanteRow() {
         JPanel row = new JPanel(new GridLayout(1, 2, 5, 5));
 
@@ -67,8 +119,22 @@ public class ResultadoSelectionView extends JDialog {
         participantesPanel.repaint();
     }
 
+    public void setModalidades(List<ModalityDTO> modalidades) {
+        modalidadeCombo.removeAllItems();
+        for (ModalityDTO modalidade : modalidades) {
+            modalidadeCombo.addItem(modalidade.getName());
+        }
+    }
+
+    public void setEtapas(List<EtapaDTO> etapas) {
+        etapaCombo.removeAllItems();
+        for (EtapaDTO etapa : etapas) {
+            etapaCombo.addItem(etapa.getNome());
+        }
+    }
+
     public void setPaises(List<CountryDTO> paises) {
-        this.paisesDisponiveis = new ArrayList<>(paises); // Atualiza a lista mantida
+        this.paisesDisponiveis = new ArrayList<>(paises);
         for (JComboBox<String> combo : paisesComboBoxes) {
             combo.removeAllItems();
             for (CountryDTO pais : paises) {
@@ -77,12 +143,29 @@ public class ResultadoSelectionView extends JDialog {
         }
     }
 
-    // ... outros métodos existentes ...
+    public void addSaveListener(ActionListener listener) {
+        btnSave.addActionListener(listener);
+    }
+
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+        dispose();
+    }
+
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
     public ResultadoDTO getResultado() {
         ResultadoDTO resultado = new ResultadoDTO();
-        resultado.setModalidadeNome(getSelectedModalidade());
-        resultado.setEtapaNome(getSelectedEtapa());
+        resultado.setModalidadeNome((String) modalidadeCombo.getSelectedItem());
+        resultado.setEtapaNome((String) etapaCombo.getSelectedItem());
         resultado.setDataResultado(LocalDateTime.now());
 
         List<ParticipacaoResultadoDTO> participacoes = new ArrayList<>();
@@ -97,10 +180,9 @@ public class ResultadoSelectionView extends JDialog {
                 String paisNome = (String) paisCombo.getSelectedItem();
                 int posicaoIndex = posicaoCombo.getSelectedIndex();
 
-                // Só adiciona se um país foi selecionado
                 if (paisNome != null && !paisNome.isEmpty()) {
                     ParticipacaoResultadoDTO participacao = new ParticipacaoResultadoDTO(
-                            null, // ID será gerado pelo banco
+                            null,
                             paisNome,
                             posicaoIndex > 0 ? posicaoIndex : null
                     );

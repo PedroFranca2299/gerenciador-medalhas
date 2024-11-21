@@ -29,6 +29,21 @@ public class CountryService {
         selectedIds.forEach(id -> repository.updateParticipationStatus(id, true));
     }
 
+    public Long findIdByName(String name) {
+        return repository.findAll()
+                .stream()
+                .filter(country -> country.getName().equals(name))
+                .map(Country::getId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("País não encontrado: " + name));
+    }
+
+    public String findNameById(Long id) {
+        return repository.findById(id)
+                .map(Country::getName)
+                .orElseThrow(() -> new IllegalArgumentException("País não encontrado com ID: " + id));
+    }
+
     private CountryDTO convertToDTO(Country country) {
         return new CountryDTO(
                 country.getId(),

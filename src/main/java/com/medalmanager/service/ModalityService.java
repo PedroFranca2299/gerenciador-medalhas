@@ -25,6 +25,21 @@ public class ModalityService {
         selectedIds.forEach(id -> repository.updateActiveStatus(id, true));
     }
 
+    public Long findIdByName(String name) {
+        return repository.findAll()
+                .stream()
+                .filter(modality -> modality.getName().equals(name))
+                .map(Modality::getId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Modalidade não encontrada: " + name));
+    }
+
+    public String findNameById(Long id) {
+        return repository.findById(id)
+                .map(Modality::getName)
+                .orElseThrow(() -> new IllegalArgumentException("Modalidade não encontrada com ID: " + id));
+    }
+
     private ModalityDTO convertToDTO(Modality modality) {
         return new ModalityDTO(
                 modality.getId(),

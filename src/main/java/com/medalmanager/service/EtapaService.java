@@ -20,6 +20,21 @@ public class EtapaService {
                 .collect(Collectors.toList());
     }
 
+    public Long findIdByName(String nome) {
+        return repository.findAll()
+                .stream()
+                .filter(etapa -> etapa.getNome().equals(nome))
+                .map(Etapa::getId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Etapa não encontrada: " + nome));
+    }
+
+    public String findNameById(Long id) {
+        return repository.findById(id)
+                .map(Etapa::getNome)
+                .orElseThrow(() -> new IllegalArgumentException("Etapa não encontrada com ID: " + id));
+    }
+
     private EtapaDTO convertToDTO(Etapa etapa) {
         return new EtapaDTO(
                 etapa.getId(),

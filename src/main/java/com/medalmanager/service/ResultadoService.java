@@ -1,12 +1,15 @@
 package com.medalmanager.service;
 
-import com.medalmanager.model.dto.ParticipacaoResultadoDTO;
 import com.medalmanager.model.dto.ResultadoDTO;
-import com.medalmanager.model.entity.ParticipacaoResultado;
+import com.medalmanager.model.dto.ParticipacaoResultadoDTO;
 import com.medalmanager.model.entity.Resultado;
+import com.medalmanager.model.entity.ParticipacaoResultado;
 import com.medalmanager.repository.ResultadoRepository;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 public class ResultadoService {
     private final ResultadoRepository repository;
@@ -62,5 +65,32 @@ public class ResultadoService {
         }
 
         return resultado;
+    }
+
+    public List<ResultadoDTO> getAllResultados() {
+        return repository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ResultadoDTO convertToDTO(Resultado resultado) {
+        ResultadoDTO dto = new ResultadoDTO();
+        dto.setId(resultado.getId());
+        dto.setModalidadeNome(modalityService.findNameById(resultado.getModalidadeId()));
+        dto.setEtapaNome(etapaService.findNameById(resultado.getEtapaId()));
+        dto.setDataResultado(resultado.getDataResultado());
+
+        List<ParticipacaoResultadoDTO> participacoes = resultado.getParticipacoes()
+                .stream()
+                .map(part -> new ParticipacaoResultadoDTO(
+                        part.getId(),
+                        countryService.findNameById(part.getPaisId()),
+                        part.getPosicao()
+                ))
+                .collect(Collectors.toList());
+
+        dto.setParticipacoes(participacoes);
+        return dto;
     }
 }

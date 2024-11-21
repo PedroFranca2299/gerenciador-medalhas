@@ -19,20 +19,32 @@ public class MedalManagerApplication {
             // Initialize repositories
             CountryRepository countryRepository = new CountryRepository();
             ModalityRepository modalityRepository = new ModalityRepository();
-            EtapaRepository etapaRepository = new EtapaRepository();  // Novo repository
+            EtapaRepository etapaRepository = new EtapaRepository();
+            ResultadoRepository resultadoRepository = new ResultadoRepository();  
 
             // Initialize services
             CountryService countryService = new CountryService(countryRepository);
             ModalityService modalityService = new ModalityService(modalityRepository);
-            EtapaService etapaService = new EtapaService(etapaRepository);  // Novo service
+            EtapaService etapaService = new EtapaService(etapaRepository);
+
+            // Inicializa ResultadoService com todas as dependências necessárias
+            ResultadoService resultadoService = new ResultadoService(
+                    resultadoRepository,
+                    modalityService,
+                    countryService,
+                    etapaService
+            );
 
             // Register dependencies
             DependencyContainer.register(CountryRepository.class, countryRepository);
             DependencyContainer.register(ModalityRepository.class, modalityRepository);
             DependencyContainer.register(EtapaRepository.class, etapaRepository);
+            DependencyContainer.register(ResultadoRepository.class, resultadoRepository);
+
             DependencyContainer.register(CountryService.class, countryService);
             DependencyContainer.register(ModalityService.class, modalityService);
             DependencyContainer.register(EtapaService.class, etapaService);
+            DependencyContainer.register(ResultadoService.class, resultadoService);
 
             // Initialize main view and controller
             MainView mainView = new MainView();
@@ -40,7 +52,8 @@ public class MedalManagerApplication {
                     mainView,
                     countryService,
                     modalityService,
-                    etapaService  // Novo serviço adicionado ao controller
+                    etapaService,
+                    resultadoService
             );
 
             // Display main view

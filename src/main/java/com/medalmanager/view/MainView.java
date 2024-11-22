@@ -1,5 +1,6 @@
 package com.medalmanager.view;
 
+import com.medalmanager.util.StyleConstants;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -9,7 +10,6 @@ public class MainView extends JFrame {
     private JButton btnModalitySelection;
     private JButton btnResults;
     private JButton btnModalityRanking;
-    private JButton btnGeneralRanking;
     private JPanel mainPanel;
 
     public MainView() {
@@ -20,17 +20,17 @@ public class MainView extends JFrame {
 
     private void initializeComponents() {
         // Inicializa botões com ícones e texto
-        btnCountrySelection = createButton("Selecionar Países", "Gerenciar países participantes");
-        btnModalitySelection = createButton("Selecionar Modalidades", "Gerenciar modalidades ativas");
-        btnResults = createButton("Inserir Resultados", "Registrar resultados de competições");
-        btnModalityRanking = createButton("Ranking de Medalhas", "Visualizar ranking de medalhas");
+        btnCountrySelection = createStyledButton("Selecionar Países", "Gerenciar países participantes");
+        btnModalitySelection = createStyledButton("Selecionar Modalidades", "Gerenciar modalidades ativas");
+        btnResults = createStyledButton("Inserir Resultados", "Registrar resultados de competições");
+        btnModalityRanking = createStyledButton("Ranking de Medalhas", "Visualizar ranking de medalhas");
     }
 
-    private JButton createButton(String text, String tooltip) {
+    private JButton createStyledButton(String text, String tooltip) {
         JButton button = new JButton(text);
         button.setToolTipText(tooltip);
-        button.setPreferredSize(new Dimension(200, 40));
-        button.setMaximumSize(new Dimension(250, 40));
+        StyleConstants.styleButton(button);
+        button.setMaximumSize(new Dimension(300, 50));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         return button;
     }
@@ -39,21 +39,19 @@ public class MainView extends JFrame {
         // Configura o painel principal
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(StyleConstants.BACKGROUND_COLOR);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         // Adiciona espaçamento entre os botões
-        addComponentWithSpacing(mainPanel, btnCountrySelection, 10);
-        addComponentWithSpacing(mainPanel, btnModalitySelection, 10);
-        addComponentWithSpacing(mainPanel, btnResults, 10);
-        addComponentWithSpacing(mainPanel, btnModalityRanking, 10);
+        addComponentWithSpacing(mainPanel, btnCountrySelection, 15);
+        addComponentWithSpacing(mainPanel, btnModalitySelection, 15);
+        addComponentWithSpacing(mainPanel, btnResults, 15);
+        addComponentWithSpacing(mainPanel, btnModalityRanking, 15);
 
-        // Adiciona o painel principal ao frame
+        // Configura o layout principal
         setLayout(new BorderLayout());
+        add(createTitlePanel(), BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER);
-
-        // Adiciona uma barra de título
-        JPanel titlePanel = createTitlePanel();
-        add(titlePanel, BorderLayout.NORTH);
     }
 
     private void addComponentWithSpacing(JPanel panel, JComponent component, int spacing) {
@@ -63,13 +61,13 @@ public class MainView extends JFrame {
 
     private JPanel createTitlePanel() {
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(51, 51, 51));
+        titlePanel.setBackground(StyleConstants.SECONDARY_COLOR);
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         JLabel titleLabel = new JLabel("Gerenciador de Medalhas");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(StyleConstants.TITLE_FONT);
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         titlePanel.add(titleLabel);
         return titlePanel;
@@ -78,13 +76,14 @@ public class MainView extends JFrame {
     private void setupFrame() {
         setTitle("Medal Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 500);
+        setSize(500, 600);
         setLocationRelativeTo(null);
         setResizable(false);
-        setMinimumSize(new Dimension(350, 450));
+        setMinimumSize(new Dimension(400, 500));
+        getContentPane().setBackground(StyleConstants.BACKGROUND_COLOR);
     }
 
-    // Métodos para adicionar listeners
+    // Métodos para adicionar listeners e mostrar mensagens
     public void addCountrySelectionListener(ActionListener listener) {
         btnCountrySelection.addActionListener(listener);
     }
@@ -101,11 +100,6 @@ public class MainView extends JFrame {
         btnModalityRanking.addActionListener(listener);
     }
 
-    public void addGeneralRankingListener(ActionListener listener) {
-        btnGeneralRanking.addActionListener(listener);
-    }
-
-    // Métodos de utilidade para mensagens
     public void showError(String message) {
         JOptionPane.showMessageDialog(this,
                 message,

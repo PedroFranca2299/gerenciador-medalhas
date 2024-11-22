@@ -1,7 +1,9 @@
 package com.medalmanager.view;
 
 import com.medalmanager.model.dto.CountryDTO;
+import com.medalmanager.util.StyleConstants;
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,55 +29,101 @@ public class CountrySelectionView extends JDialog {
     }
 
     private void initializeComponents() {
+        // Criar checkboxes estilizados
         for (CountryDTO country : countries) {
             JCheckBox checkbox = new JCheckBox(country.getName());
             checkbox.setSelected(country.isParticipating());
             checkbox.putClientProperty("countryId", country.getId());
             checkbox.addActionListener(e -> updateCount());
+            checkbox.setFont(StyleConstants.REGULAR_FONT);
+            checkbox.setBackground(StyleConstants.BACKGROUND_COLOR);
             checkboxes.add(checkbox);
         }
 
+        // Botões principais
         btnSave = new JButton("Salvar");
         btnCancel = new JButton("Cancelar");
         btnRandom = new JButton("16 aleatórios");
         btnClear = new JButton("Limpar Seleção");
 
+        // Estilizar botões
+        StyleConstants.styleButton(btnSave);
+        StyleConstants.styleSecondaryButton(btnCancel);
+        StyleConstants.styleButton(btnRandom);
+        StyleConstants.styleButton(btnClear);
+
         btnRandom.addActionListener(e -> selectRandom16());
         btnClear.addActionListener(e -> clearAll());
 
+        // Label contador
         countLabel = new JLabel("Selecionados: 0/16");
+        countLabel.setFont(StyleConstants.HEADER_FONT);
+        countLabel.setForeground(StyleConstants.SECONDARY_COLOR);
         updateCount();
     }
 
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel for control buttons
+        // Painel de título
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(StyleConstants.SECONDARY_COLOR);
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        JLabel titleLabel = new JLabel("Seleção de Países");
+        titleLabel.setFont(StyleConstants.HEADER_FONT);
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
+
+        // Painel de controle superior
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        topPanel.setBackground(StyleConstants.BACKGROUND_COLOR);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         topPanel.add(btnRandom);
         topPanel.add(btnClear);
 
-        // Checkbox panel
-        JPanel checkboxPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        checkboxes.forEach(checkboxPanel::add);
+        // Painel de checkboxes
+        JPanel checkboxPanel = new JPanel();
+        checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
+        checkboxPanel.setBackground(StyleConstants.BACKGROUND_COLOR);
+        checkboxPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        // Adicionar checkboxes em grupos para melhor organização
+        for (JCheckBox checkbox : checkboxes) {
+            JPanel checkboxRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            checkboxRow.setBackground(StyleConstants.BACKGROUND_COLOR);
+            checkboxRow.add(checkbox);
+            checkboxPanel.add(checkboxRow);
+        }
 
         JScrollPane scrollPane = new JScrollPane(checkboxPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(StyleConstants.BACKGROUND_COLOR);
 
-        // Button panel
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        bottomPanel.add(countLabel);
-        bottomPanel.add(btnSave);
-        bottomPanel.add(btnCancel);
+        // Painel inferior
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridBagLayout());
+        bottomPanel.setBackground(StyleConstants.BACKGROUND_COLOR);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Main panel with padding
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        add(mainPanel);
+        bottomPanel.add(countLabel, gbc);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.setBackground(StyleConstants.BACKGROUND_COLOR);
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
+        bottomPanel.add(buttonPanel, gbc);
+
+        // Adicionar todos os painéis
+        add(titlePanel, BorderLayout.NORTH);
+        add(topPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void selectRandom16() {
@@ -102,9 +150,11 @@ public class CountrySelectionView extends JDialog {
     private void setupDialog() {
         setTitle("Selecionar Países");
         setModal(true);
-        setSize(400, 500);
+        setSize(500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        getContentPane().setBackground(StyleConstants.BACKGROUND_COLOR);
+        setMinimumSize(new Dimension(400, 500));
     }
 
     private void updateCount() {
@@ -112,10 +162,10 @@ public class CountrySelectionView extends JDialog {
                 .filter(AbstractButton::isSelected)
                 .count();
         countLabel.setText(String.format("Selecionados: %d/16", selectedCount));
-
-        // Update Random button state based on selection count
-        btnRandom.setEnabled(checkboxes.size() >= 16);
+        countLabel.setForeground(selectedCount == 16 ?
+                StyleConstants.SUCCESS_COLOR : StyleConstants.SECONDARY_COLOR);
     }
+
 
     public List<Long> getSelectedIds() {
         return checkboxes.stream()
@@ -129,11 +179,17 @@ public class CountrySelectionView extends JDialog {
     }
 
     public void showSuccess(String message) {
-        JOptionPane.showMessageDialog(this, message, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
         dispose();
     }
 
     public void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Erro", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
     }
 }

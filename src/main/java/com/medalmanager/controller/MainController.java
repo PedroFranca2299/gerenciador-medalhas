@@ -1,13 +1,8 @@
 package com.medalmanager.controller;
 
-import com.medalmanager.service.CountryService;
-import com.medalmanager.service.ModalityService;
-import com.medalmanager.service.EtapaService;
-import com.medalmanager.service.ResultadoService;
-import com.medalmanager.view.MainView;
-import com.medalmanager.view.CountrySelectionView;
-import com.medalmanager.view.ModalitySelectionView;
-import com.medalmanager.view.ResultadoSelectionView;
+import com.medalmanager.service.*;
+import com.medalmanager.util.DependencyContainer;
+import com.medalmanager.view.*;
 import javax.swing.JOptionPane;
 
 public class MainController {
@@ -16,17 +11,20 @@ public class MainController {
     private final ModalityService modalityService;
     private final EtapaService etapaService;
     private final ResultadoService resultadoService;
+    private final RankingService rankingService;
 
     public MainController(MainView mainView,
                           CountryService countryService,
                           ModalityService modalityService,
                           EtapaService etapaService,
-                          ResultadoService resultadoService) {
+                          ResultadoService resultadoService,
+                          RankingService rankingService) {
         this.mainView = mainView;
         this.countryService = countryService;
         this.modalityService = modalityService;
         this.etapaService = etapaService;
         this.resultadoService = resultadoService;
+        this.rankingService = rankingService;
 
         initializeListeners();
     }
@@ -36,6 +34,7 @@ public class MainController {
         mainView.addCountrySelectionListener(e -> showCountrySelection());
         mainView.addModalitySelectionListener(e -> showModalitySelection());
         mainView.addResultsListener(e -> showResultsSelection());
+        mainView.addModalityRankingListener(e -> showModalityRanking());
     }
 
     private void showCountrySelection() {
@@ -65,21 +64,29 @@ public class MainController {
     private void showResultsSelection() {
         try {
             ResultadoSelectionView view = new ResultadoSelectionView();
-
-            // Carrega os dados necessários
             view.setModalidades(modalityService.getAllModalities());
             view.setEtapas(etapaService.getAllEtapas());
             view.setPaises(countryService.getAllCountries());
 
-            // Cria e configura o controller
             ResultadoController controller = new ResultadoController(view, resultadoService);
-
-            // Centraliza em relação à tela principal
             view.setLocationRelativeTo(mainView);
             view.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error opening results selection: " + e.getMessage());
+        }
+    }
+
+    private void showModalityRanking() {
+        System.out.println("Attempting to show modality ranking...");
+        try {
+            RankingModalidadeView view = new RankingModalidadeView();
+            new RankingModalidadeController(view, rankingService, modalityService);
+            view.setLocationRelativeTo(mainView);
+            view.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error opening modality ranking: " + e.getMessage());
         }
     }
 

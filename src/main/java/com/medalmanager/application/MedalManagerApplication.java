@@ -20,19 +20,26 @@ public class MedalManagerApplication {
             CountryRepository countryRepository = new CountryRepository();
             ModalityRepository modalityRepository = new ModalityRepository();
             EtapaRepository etapaRepository = new EtapaRepository();
-            ResultadoRepository resultadoRepository = new ResultadoRepository();  
+            ResultadoRepository resultadoRepository = new ResultadoRepository();
 
             // Initialize services
             CountryService countryService = new CountryService(countryRepository);
             ModalityService modalityService = new ModalityService(modalityRepository);
             EtapaService etapaService = new EtapaService(etapaRepository);
 
-            // Inicializa ResultadoService com todas as dependências necessárias
+            // Initialize ResultadoService
             ResultadoService resultadoService = new ResultadoService(
                     resultadoRepository,
                     modalityService,
                     countryService,
                     etapaService
+            );
+
+            // Initialize RankingService
+            RankingService rankingService = new RankingService(
+                    resultadoRepository,
+                    modalityService,
+                    countryService
             );
 
             // Register dependencies
@@ -45,6 +52,7 @@ public class MedalManagerApplication {
             DependencyContainer.register(ModalityService.class, modalityService);
             DependencyContainer.register(EtapaService.class, etapaService);
             DependencyContainer.register(ResultadoService.class, resultadoService);
+            DependencyContainer.register(RankingService.class, rankingService);
 
             // Initialize main view and controller
             MainView mainView = new MainView();
@@ -53,7 +61,8 @@ public class MedalManagerApplication {
                     countryService,
                     modalityService,
                     etapaService,
-                    resultadoService
+                    resultadoService,
+                    rankingService
             );
 
             // Display main view

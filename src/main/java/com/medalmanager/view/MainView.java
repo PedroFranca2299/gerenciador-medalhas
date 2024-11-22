@@ -10,6 +10,7 @@ public class MainView extends JFrame {
     private JButton btnResults;
     private JButton btnModalityRanking;
     private JButton btnGeneralRanking;
+    private JPanel mainPanel;
 
     public MainView() {
         initializeComponents();
@@ -18,46 +19,72 @@ public class MainView extends JFrame {
     }
 
     private void initializeComponents() {
-        btnCountrySelection = new JButton("Selecionar Países");
-        btnModalitySelection = new JButton("Selecionar Modalidades");
-        btnResults = new JButton("Inserir resultados");
-        btnModalityRanking = new JButton("Ranking por Modalidades");
-        btnGeneralRanking = new JButton("Ranking Geral");
+        // Inicializa botões com ícones e texto
+        btnCountrySelection = createButton("Selecionar Países", "Gerenciar países participantes");
+        btnModalitySelection = createButton("Selecionar Modalidades", "Gerenciar modalidades ativas");
+        btnResults = createButton("Inserir Resultados", "Registrar resultados de competições");
+        btnModalityRanking = createButton("Ranking de Medalhas", "Visualizar ranking de medalhas");
+    }
+
+    private JButton createButton(String text, String tooltip) {
+        JButton button = new JButton(text);
+        button.setToolTipText(tooltip);
+        button.setPreferredSize(new Dimension(200, 40));
+        button.setMaximumSize(new Dimension(250, 40));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return button;
     }
 
     private void setupLayout() {
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridx = 0;
-        gbc.weightx = 1.0;
-        gbc.ipadx = 50;
+        // Configura o painel principal
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        gbc.gridy = 0;
-        add(btnCountrySelection, gbc);
+        // Adiciona espaçamento entre os botões
+        addComponentWithSpacing(mainPanel, btnCountrySelection, 10);
+        addComponentWithSpacing(mainPanel, btnModalitySelection, 10);
+        addComponentWithSpacing(mainPanel, btnResults, 10);
+        addComponentWithSpacing(mainPanel, btnModalityRanking, 10);
 
-        gbc.gridy = 1;
-        add(btnModalitySelection, gbc);
+        // Adiciona o painel principal ao frame
+        setLayout(new BorderLayout());
+        add(mainPanel, BorderLayout.CENTER);
 
-        gbc.gridy = 2;
-        add(btnResults, gbc);
+        // Adiciona uma barra de título
+        JPanel titlePanel = createTitlePanel();
+        add(titlePanel, BorderLayout.NORTH);
+    }
 
-        gbc.gridy = 3;
-        add(btnModalityRanking, gbc);
+    private void addComponentWithSpacing(JPanel panel, JComponent component, int spacing) {
+        panel.add(Box.createRigidArea(new Dimension(0, spacing)));
+        panel.add(component);
+    }
 
-        gbc.gridy = 4;
-        add(btnGeneralRanking, gbc);
+    private JPanel createTitlePanel() {
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(51, 51, 51));
+        titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        JLabel titleLabel = new JLabel("Gerenciador de Medalhas");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        titlePanel.add(titleLabel);
+        return titlePanel;
     }
 
     private void setupFrame() {
         setTitle("Medal Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(400, 500);
         setLocationRelativeTo(null);
         setResizable(false);
+        setMinimumSize(new Dimension(350, 450));
     }
 
+    // Métodos para adicionar listeners
     public void addCountrySelectionListener(ActionListener listener) {
         btnCountrySelection.addActionListener(listener);
     }
@@ -66,8 +93,37 @@ public class MainView extends JFrame {
         btnModalitySelection.addActionListener(listener);
     }
 
-    // Novo método para adicionar listener ao botão de resultados
     public void addResultsListener(ActionListener listener) {
         btnResults.addActionListener(listener);
+    }
+
+    public void addModalityRankingListener(ActionListener listener) {
+        btnModalityRanking.addActionListener(listener);
+    }
+
+    public void addGeneralRankingListener(ActionListener listener) {
+        btnGeneralRanking.addActionListener(listener);
+    }
+
+    // Métodos de utilidade para mensagens
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showWarning(String message) {
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Aviso",
+                JOptionPane.WARNING_MESSAGE);
     }
 }

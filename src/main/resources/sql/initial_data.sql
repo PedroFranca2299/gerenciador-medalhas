@@ -1,3 +1,10 @@
+INSERT INTO etapas (nome) VALUES
+('Oitavas de Final'),
+('Quartas de Final'),
+('Semifinal'),
+('Final');
+
+-- Inserção dos países
 INSERT INTO paises (nome) VALUES
 ('Estados Unidos'),
 ('China'),
@@ -41,7 +48,7 @@ INSERT INTO paises (nome) VALUES
 ('Jamaica'),
 ('Cuba');
 
--- Inserindo modalidades olímpicas na tabela 'modalidades' sem o ID
+-- Inserção das modalidades
 INSERT INTO modalidades (nome) VALUES
 ('Atletismo'),
 ('Natação'),

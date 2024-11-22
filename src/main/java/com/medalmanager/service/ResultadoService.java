@@ -4,7 +4,10 @@ import com.medalmanager.model.dto.ResultadoDTO;
 import com.medalmanager.model.dto.ParticipacaoResultadoDTO;
 import com.medalmanager.model.entity.Resultado;
 import com.medalmanager.model.entity.ParticipacaoResultado;
+import com.medalmanager.model.entity.Country;
 import com.medalmanager.repository.ResultadoRepository;
+import com.medalmanager.repository.CountryRepository;
+
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -16,19 +19,22 @@ public class ResultadoService {
     private final ModalityService modalityService;
     private final CountryService countryService;
     private final EtapaService etapaService;
+    private final CountryRepository countryRepository;
 
     public ResultadoService(ResultadoRepository repository,
                             ModalityService modalityService,
                             CountryService countryService,
-                            EtapaService etapaService) {
+                            EtapaService etapaService,
+                            CountryRepository countryRepository) {
         this.repository = repository;
         this.modalityService = modalityService;
         this.countryService = countryService;
         this.etapaService = etapaService;
+        this.countryRepository = countryRepository;
     }
 
     public void saveResultado(ResultadoDTO resultadoDTO) {
-        // Validações
+        // Validação de participantes
         if (resultadoDTO.getParticipacoes().isEmpty()) {
             throw new IllegalArgumentException("Deve haver pelo menos um participante");
         }
@@ -41,6 +47,23 @@ public class ResultadoService {
                     throw new IllegalArgumentException("Posições no pódio não podem ser duplicadas");
                 }
             }
+        }
+
+        // Verifica se todos os países estão marcados como participantes
+        List<String> paisesNaoParticipantes = resultadoDTO.getParticipacoes().stream()
+                .map(ParticipacaoResultadoDTO::getPaisNome)
+                .filter(paisNome -> {
+                    Country country = countryRepository.findById(countryService.findIdByName(paisNome))
+                            .orElseThrow(() -> new IllegalArgumentException("País não encontrado: " + paisNome));
+                    return !country.isParticipating();
+                })
+                .collect(Collectors.toList());
+
+        if (!paisesNaoParticipantes.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Os seguintes países não estão marcados como participantes: " +
+                            String.join(", ", paisesNaoParticipantes)
+            );
         }
 
         // Converte DTO para entity e salva

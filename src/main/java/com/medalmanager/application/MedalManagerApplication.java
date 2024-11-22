@@ -4,6 +4,7 @@ import com.medalmanager.config.DatabaseConfig;
 import com.medalmanager.controller.MainController;
 import com.medalmanager.repository.*;
 import com.medalmanager.service.*;
+import com.medalmanager.util.DatabaseInitializer;
 import com.medalmanager.util.DependencyContainer;
 import com.medalmanager.view.MainView;
 
@@ -15,6 +16,9 @@ public class MedalManagerApplication {
             // Initialize configuration
             DatabaseConfig.initialize();
             System.out.println("Database configuration initialized successfully");
+
+            DatabaseInitializer.initialize();
+            System.out.println("Database structure check completed");
 
             // Initialize repositories
             CountryRepository countryRepository = new CountryRepository();
@@ -32,7 +36,8 @@ public class MedalManagerApplication {
                     resultadoRepository,
                     modalityService,
                     countryService,
-                    etapaService
+                    etapaService,
+                    countryRepository
             );
 
             // Initialize RankingService

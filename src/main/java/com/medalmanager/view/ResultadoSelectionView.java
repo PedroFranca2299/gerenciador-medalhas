@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ResultadoSelectionView extends JDialog {
     private JComboBox<String> modalidadeCombo;
@@ -25,6 +26,7 @@ public class ResultadoSelectionView extends JDialog {
 
     public ResultadoSelectionView() {
         paisesDisponiveis = new ArrayList<>();
+        paisesComboBoxes = new ArrayList<>();
         initializeComponents();
         setupLayout();
         setupDialog();
@@ -34,17 +36,16 @@ public class ResultadoSelectionView extends JDialog {
         modalidadeCombo = new JComboBox<>();
         etapaCombo = new JComboBox<>();
         participantesPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        paisesComboBoxes = new ArrayList<>();
 
         btnAddParticipante = new JButton("Adicionar Participante");
         btnAddParticipante.addActionListener(e -> addParticipanteRow());
+        btnAddParticipante.setEnabled(false); // Começa desabilitado até termos países
 
         btnSave = new JButton("Salvar");
+        btnSave.setEnabled(false); // Começa desabilitado
+
         btnCancel = new JButton("Cancelar");
         btnCancel.addActionListener(e -> dispose());
-
-        addParticipanteRow();
-        addParticipanteRow();
     }
 
     private void setupLayout() {
@@ -99,13 +100,22 @@ public class ResultadoSelectionView extends JDialog {
     }
 
     private void addParticipanteRow() {
+        List<CountryDTO> paisesParticipantes = paisesDisponiveis.stream()
+                .filter(CountryDTO::isParticipating)
+                .collect(Collectors.toList());
+
+        if (paisesParticipantes.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Não há países participantes selecionados. Por favor, selecione os países participantes primeiro.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         JPanel row = new JPanel(new GridLayout(1, 2, 5, 5));
 
         JComboBox<String> paisCombo = new JComboBox<>();
-        // Preenche o novo combo com os países disponíveis
-        for (CountryDTO pais : paisesDisponiveis) {
-            paisCombo.addItem(pais.getName());
-        }
+        paisesParticipantes.forEach(pais -> paisCombo.addItem(pais.getName()));
         paisesComboBoxes.add(paisCombo);
 
         JComboBox<String> posicaoCombo = new JComboBox<>(
@@ -115,6 +125,35 @@ public class ResultadoSelectionView extends JDialog {
         row.add(posicaoCombo);
 
         participantesPanel.add(row);
+        participantesPanel.revalidate();
+        participantesPanel.repaint();
+
+        btnSave.setEnabled(true);
+    }
+
+    public void setPaises(List<CountryDTO> paises) {
+        this.paisesDisponiveis = new ArrayList<>(paises);
+
+        // Verifica se há países participantes
+        boolean haParticipantes = paises.stream().anyMatch(CountryDTO::isParticipating);
+        btnAddParticipante.setEnabled(haParticipantes);
+
+        // Limpa o painel de participantes
+        participantesPanel.removeAll();
+        paisesComboBoxes.clear();
+
+        if (!haParticipantes) {
+            JOptionPane.showMessageDialog(this,
+                    "Não há países participantes selecionados. Por favor, selecione os países participantes primeiro.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
+            btnSave.setEnabled(false);
+        } else {
+            // Adiciona duas linhas iniciais de participantes
+            addParticipanteRow();
+            addParticipanteRow();
+        }
+
         participantesPanel.revalidate();
         participantesPanel.repaint();
     }
@@ -130,16 +169,6 @@ public class ResultadoSelectionView extends JDialog {
         etapaCombo.removeAllItems();
         for (EtapaDTO etapa : etapas) {
             etapaCombo.addItem(etapa.getNome());
-        }
-    }
-
-    public void setPaises(List<CountryDTO> paises) {
-        this.paisesDisponiveis = new ArrayList<>(paises);
-        for (JComboBox<String> combo : paisesComboBoxes) {
-            combo.removeAllItems();
-            for (CountryDTO pais : paises) {
-                combo.addItem(pais.getName());
-            }
         }
     }
 

@@ -14,9 +14,8 @@ public class ResultadoRepository {
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            conn.setAutoCommit(false);  // Inicia transação
+            conn.setAutoCommit(false);
 
-            // Salva o resultado principal
             String resultadoQuery = "INSERT INTO resultados (modalidade_id, etapa_id, data_resultado) VALUES (?, ?, ?)";
 
             try (PreparedStatement stmt = conn.prepareStatement(resultadoQuery, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,7 +34,6 @@ public class ResultadoRepository {
                 }
             }
 
-            // Salva as participações
             String participacaoQuery = "INSERT INTO participacoes_resultado (resultado_id, pais_id, posicao) VALUES (?, ?, ?)";
 
             try (PreparedStatement stmt = conn.prepareStatement(participacaoQuery, Statement.RETURN_GENERATED_KEYS)) {
@@ -58,13 +56,13 @@ public class ResultadoRepository {
                 }
             }
 
-            conn.commit();  // Confirma transação
+            conn.commit();
             return resultado;
 
         } catch (SQLException e) {
             try {
                 if (conn != null) {
-                    conn.rollback();  // Desfaz transação em caso de erro
+                    conn.rollback();
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();

@@ -19,7 +19,6 @@ public class MainView extends JFrame {
     }
 
     private void initializeComponents() {
-        // Inicializa botões com ícones e texto
         btnCountrySelection = createButton("Selecionar Países", "Gerenciar países participantes");
         btnModalitySelection = createButton("Selecionar Modalidades", "Gerenciar modalidades ativas");
         btnResults = createButton("Inserir Resultados", "Registrar resultados de competições");
@@ -36,22 +35,18 @@ public class MainView extends JFrame {
     }
 
     private void setupLayout() {
-        // Configura o painel principal
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Adiciona espaçamento entre os botões
         addComponentWithSpacing(mainPanel, btnCountrySelection, 10);
         addComponentWithSpacing(mainPanel, btnModalitySelection, 10);
         addComponentWithSpacing(mainPanel, btnResults, 10);
         addComponentWithSpacing(mainPanel, btnModalityRanking, 10);
 
-        // Adiciona o painel principal ao frame
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
 
-        // Adiciona uma barra de título
         JPanel titlePanel = createTitlePanel();
         add(titlePanel, BorderLayout.NORTH);
     }
@@ -84,7 +79,6 @@ public class MainView extends JFrame {
         setMinimumSize(new Dimension(350, 450));
     }
 
-    // Métodos para adicionar listeners
     public void addCountrySelectionListener(ActionListener listener) {
         btnCountrySelection.addActionListener(listener);
     }
@@ -105,7 +99,6 @@ public class MainView extends JFrame {
         btnGeneralRanking.addActionListener(listener);
     }
 
-    // Métodos de utilidade para mensagens
     public void showError(String message) {
         JOptionPane.showMessageDialog(this,
                 message,

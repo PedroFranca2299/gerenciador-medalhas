@@ -15,7 +15,6 @@ public class RankingDTO {
         this.total = ouro + prata + bronze;
     }
 
-    // Getters e Setters
     public String getPaisNome() { return paisNome; }
     public void setPaisNome(String paisNome) { this.paisNome = paisNome; }
 

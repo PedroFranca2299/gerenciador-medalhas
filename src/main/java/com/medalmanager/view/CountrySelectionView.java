@@ -50,25 +50,21 @@ public class CountrySelectionView extends JDialog {
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel for control buttons
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         topPanel.add(btnRandom);
         topPanel.add(btnClear);
 
-        // Checkbox panel
         JPanel checkboxPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         checkboxes.forEach(checkboxPanel::add);
 
         JScrollPane scrollPane = new JScrollPane(checkboxPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        // Button panel
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         bottomPanel.add(countLabel);
         bottomPanel.add(btnSave);
         bottomPanel.add(btnCancel);
 
-        // Main panel with padding
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.add(topPanel, BorderLayout.NORTH);
@@ -83,10 +79,8 @@ public class CountrySelectionView extends JDialog {
             List<JCheckBox> shuffled = new ArrayList<>(checkboxes);
             Collections.shuffle(shuffled);
 
-            // First uncheck all
             checkboxes.forEach(cb -> cb.setSelected(false));
 
-            // Select first 16 from shuffled list
             shuffled.subList(0, 16).forEach(cb -> cb.setSelected(true));
             updateCount();
         } else {
@@ -113,7 +107,6 @@ public class CountrySelectionView extends JDialog {
                 .count();
         countLabel.setText(String.format("Selecionados: %d/16", selectedCount));
 
-        // Update Random button state based on selection count
         btnRandom.setEnabled(checkboxes.size() >= 16);
     }
 

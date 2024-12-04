@@ -1,4 +1,3 @@
-// model/dto/EtapaDTO.java
 package com.medalmanager.model.dto;
 
 public class EtapaDTO {

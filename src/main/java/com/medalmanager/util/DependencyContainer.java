@@ -7,7 +7,6 @@ public class DependencyContainer {
     private static final Map<Class<?>, Object> container = new HashMap<>();
 
     private DependencyContainer() {
-        // Private constructor to prevent instantiation
     }
 
     public static <T> void register(Class<T> type, T implementation) {

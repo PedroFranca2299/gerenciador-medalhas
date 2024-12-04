@@ -4,7 +4,7 @@ public class ParticipacaoResultado {
     private Long id;
     private Long resultadoId;
     private Long paisId;
-    private Integer posicao;  // null se não ficou no pódio
+    private Integer posicao;
 
     public ParticipacaoResultado() {}
 

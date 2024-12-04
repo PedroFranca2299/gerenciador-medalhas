@@ -25,10 +25,8 @@ public class RankingService {
     }
 
     public List<RankingDTO> getRankingByModality(String modalidadeName) {
-        // Busca todos os resultados
         List<Resultado> resultados = resultadoRepository.findAll();
 
-        // Filtra por modalidade se não for "todas"
         if (!ALL_MODALITIES.equals(modalidadeName)) {
             Long modalidadeId = modalityService.findIdByName(modalidadeName);
             resultados = resultados.stream()
@@ -36,10 +34,8 @@ public class RankingService {
                     .collect(Collectors.toList());
         }
 
-        // Mapa para armazenar as contagens de medalhas por país
         Map<Long, int[]> medalhasPorPais = new HashMap<>();
 
-        // Processa cada resultado
         for (Resultado resultado : resultados) {
             for (ParticipacaoResultado participacao : resultado.getParticipacoes()) {
                 if (participacao.getPosicao() != null && participacao.getPosicao() <= 3) {
@@ -50,16 +46,15 @@ public class RankingService {
             }
         }
 
-        // Converte o mapa para lista de DTOs
         List<RankingDTO> ranking = new ArrayList<>();
         for (Map.Entry<Long, int[]> entry : medalhasPorPais.entrySet()) {
             String paisNome = countryService.findNameById(entry.getKey());
             int[] medalhas = entry.getValue();
             ranking.add(new RankingDTO(
                     paisNome,
-                    medalhas[0], // ouro
-                    medalhas[1], // prata
-                    medalhas[2]  // bronze
+                    medalhas[0],
+                    medalhas[1],
+                    medalhas[2]
             ));
         }
 

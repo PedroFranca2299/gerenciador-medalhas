@@ -46,24 +46,20 @@ public class ModalitySelectionView extends JDialog {
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel for toggle all button
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.add(btnToggleAll);
 
-        // Checkbox panel
         JPanel checkboxPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         checkboxes.forEach(checkboxPanel::add);
 
         JScrollPane scrollPane = new JScrollPane(checkboxPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        // Button and label panel
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         bottomPanel.add(selectionLabel);
         bottomPanel.add(btnSave);
         bottomPanel.add(btnCancel);
 
-        // Main panel with padding
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.add(topPanel, BorderLayout.NORTH);

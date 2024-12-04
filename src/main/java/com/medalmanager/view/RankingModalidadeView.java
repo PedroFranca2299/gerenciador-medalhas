@@ -18,14 +18,12 @@ public class RankingModalidadeView extends JDialog {
     private TableRowSorter<DefaultTableModel> sorter;
     private JButton btnClose;
 
-    // Botões de ordenação
     private JButton btnTotalMedals;
     private JButton btnGoldMedals;
     private JButton btnSilverMedals;
     private JButton btnBronzeMedals;
     private JButton btnCountryName;
 
-    // Estado da ordenação
     private boolean totalMedalsAsc = true;
     private boolean goldMedalsAsc = true;
     private boolean silverMedalsAsc = true;
@@ -41,7 +39,6 @@ public class RankingModalidadeView extends JDialog {
     private void initializeComponents() {
         modalidadeCombo = new JComboBox<>();
 
-        // Configuração da tabela
         String[] columnNames = {"País", "Ouro", "Prata", "Bronze", "Total"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -64,17 +61,14 @@ public class RankingModalidadeView extends JDialog {
         sorter = new TableRowSorter<>(tableModel);
         rankingTable.setRowSorter(sorter);
 
-        // Configuração dos botões de ordenação
         btnCountryName = createSortButton("Nome do País");
         btnGoldMedals = createSortButton("Ouro");
         btnSilverMedals = createSortButton("Prata");
         btnBronzeMedals = createSortButton("Bronze");
         btnTotalMedals = createSortButton("Total de Medalhas");
 
-        // Botão de fechar
         btnClose = new JButton("Fechar");
 
-        // Adiciona listeners aos botões de ordenação
         btnCountryName.addActionListener(e -> toggleSort(0, countryNameAsc));
         btnGoldMedals.addActionListener(e -> toggleSort(1, goldMedalsAsc));
         btnSilverMedals.addActionListener(e -> toggleSort(2, silverMedalsAsc));
@@ -94,13 +88,11 @@ public class RankingModalidadeView extends JDialog {
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
 
-        // Painel superior
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         topPanel.add(new JLabel("Modalidade:"));
         topPanel.add(modalidadeCombo);
 
-        // Painel de botões de ordenação
         JPanel sortButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         sortButtonsPanel.add(new JLabel("Ordenar por:"));
         sortButtonsPanel.add(btnCountryName);
@@ -109,23 +101,19 @@ public class RankingModalidadeView extends JDialog {
         sortButtonsPanel.add(btnBronzeMedals);
         sortButtonsPanel.add(btnTotalMedals);
 
-        // Painel da tabela
         JScrollPane tableScrollPane = new JScrollPane(rankingTable);
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // Painel inferior
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         bottomPanel.add(btnClose);
 
-        // Painel principal
         JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(sortButtonsPanel, BorderLayout.CENTER);
         mainPanel.add(tableScrollPane, BorderLayout.SOUTH);
 
-        // Adiciona os painéis ao layout principal
         add(mainPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
@@ -140,10 +128,8 @@ public class RankingModalidadeView extends JDialog {
     }
 
     private void toggleSort(int column, boolean currentAsc) {
-        // Inverte a ordem atual
         boolean newOrder = !currentAsc;
 
-        // Atualiza o estado da ordenação
         switch (column) {
             case 0: countryNameAsc = newOrder; break;
             case 1: goldMedalsAsc = newOrder; break;
@@ -152,13 +138,11 @@ public class RankingModalidadeView extends JDialog {
             case 4: totalMedalsAsc = newOrder; break;
         }
 
-        // Aplica a ordenação
         sorter.setSortKeys(List.of(new RowSorter.SortKey(
                 column,
                 newOrder ? SortOrder.ASCENDING : SortOrder.DESCENDING
         )));
 
-        // Atualiza o texto do botão para indicar a direção da ordenação
         JButton currentButton = switch (column) {
             case 0 -> btnCountryName;
             case 1 -> btnGoldMedals;

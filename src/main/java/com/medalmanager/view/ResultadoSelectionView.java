@@ -39,10 +39,10 @@ public class ResultadoSelectionView extends JDialog {
 
         btnAddParticipante = new JButton("Adicionar Participante");
         btnAddParticipante.addActionListener(e -> addParticipanteRow());
-        btnAddParticipante.setEnabled(false); // Começa desabilitado até termos países
+        btnAddParticipante.setEnabled(false);
 
         btnSave = new JButton("Salvar");
-        btnSave.setEnabled(false); // Começa desabilitado
+        btnSave.setEnabled(false);
 
         btnCancel = new JButton("Cancelar");
         btnCancel.addActionListener(e -> dispose());
@@ -51,7 +51,6 @@ public class ResultadoSelectionView extends JDialog {
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
 
-        // Painel superior para seleção de modalidade e etapa
         JPanel topPanel = new JPanel(new GridLayout(2, 2, 5, 5));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
 
@@ -60,7 +59,6 @@ public class ResultadoSelectionView extends JDialog {
         topPanel.add(new JLabel("Etapa:"));
         topPanel.add(etapaCombo);
 
-        // Painel central para participantes
         JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
@@ -68,23 +66,19 @@ public class ResultadoSelectionView extends JDialog {
         participantesLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         centerPanel.add(participantesLabel, BorderLayout.NORTH);
 
-        // Painel de scroll para os participantes
         JScrollPane scrollPane = new JScrollPane(participantesPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Botão de adicionar participante
         JPanel addButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         addButtonPanel.add(btnAddParticipante);
         centerPanel.add(addButtonPanel, BorderLayout.SOUTH);
 
-        // Painel inferior para botões de ação
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
         bottomPanel.add(btnSave);
         bottomPanel.add(btnCancel);
 
-        // Adiciona todos os painéis ao layout principal
         add(topPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -134,11 +128,9 @@ public class ResultadoSelectionView extends JDialog {
     public void setPaises(List<CountryDTO> paises) {
         this.paisesDisponiveis = new ArrayList<>(paises);
 
-        // Verifica se há países participantes
         boolean haParticipantes = paises.stream().anyMatch(CountryDTO::isParticipating);
         btnAddParticipante.setEnabled(haParticipantes);
 
-        // Limpa o painel de participantes
         participantesPanel.removeAll();
         paisesComboBoxes.clear();
 
@@ -149,7 +141,6 @@ public class ResultadoSelectionView extends JDialog {
                     JOptionPane.WARNING_MESSAGE);
             btnSave.setEnabled(false);
         } else {
-            // Adiciona duas linhas iniciais de participantes
             addParticipanteRow();
             addParticipanteRow();
         }

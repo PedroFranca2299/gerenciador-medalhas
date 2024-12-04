@@ -34,12 +34,10 @@ public class ResultadoService {
     }
 
     public void saveResultado(ResultadoDTO resultadoDTO) {
-        // Validação de participantes
         if (resultadoDTO.getParticipacoes().isEmpty()) {
             throw new IllegalArgumentException("Deve haver pelo menos um participante");
         }
 
-        // Verifica se há posições duplicadas no pódio
         Set<Integer> posicoes = new HashSet<>();
         for (ParticipacaoResultadoDTO part : resultadoDTO.getParticipacoes()) {
             if (part.getPosicao() != null) {
@@ -49,7 +47,6 @@ public class ResultadoService {
             }
         }
 
-        // Verifica se todos os países estão marcados como participantes
         List<String> paisesNaoParticipantes = resultadoDTO.getParticipacoes().stream()
                 .map(ParticipacaoResultadoDTO::getPaisNome)
                 .filter(paisNome -> {
@@ -66,7 +63,6 @@ public class ResultadoService {
             );
         }
 
-        // Converte DTO para entity e salva
         Resultado resultado = convertToEntity(resultadoDTO);
         repository.save(resultado);
     }
@@ -74,12 +70,10 @@ public class ResultadoService {
     private Resultado convertToEntity(ResultadoDTO dto) {
         Resultado resultado = new Resultado();
 
-        // Busca IDs baseado nos nomes
         resultado.setModalidadeId(modalityService.findIdByName(dto.getModalidadeNome()));
         resultado.setEtapaId(etapaService.findIdByName(dto.getEtapaNome()));
         resultado.setDataResultado(dto.getDataResultado());
 
-        // Converte participações
         for (ParticipacaoResultadoDTO partDTO : dto.getParticipacoes()) {
             ParticipacaoResultado part = new ParticipacaoResultado();
             part.setPaisId(countryService.findIdByName(partDTO.getPaisNome()));

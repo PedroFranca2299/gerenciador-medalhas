@@ -16,9 +16,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
         </dependency>
         <dependency>
             <groupId>io.github.cdimascio</groupId>
@@ -64,6 +64,58 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.3.3</version>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/gerenciador-medalhas.exe</outfile>
+                            <jar>target/gerenciador-medalhas-1.0-SNAPSHOT.jar</jar>
+                            <errTitle>Gerenciador de Medalhas</errTitle>
+                            <classPath>
+                                <mainClass>com.medalmanager.application.MedalManagerApplication</mainClass>
+                                <addDependencies>true</addDependencies>
+                            </classPath>
+                            <jre>
+                                <!-- This section specifies Java requirements -->
+                                <path>%EXEDIR%/jre</path>  <!-- Look for JRE in a folder next to our exe -->
+                                <bundledJre64Bit>true</bundledJre64Bit>
+                                <minVersion>17.0.0</minVersion>
+                                <runtimeBits>64</runtimeBits>
+                                <jdkPreference>jdkOnly</jdkPreference>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.0.0.0</fileVersion>
+                                <txtFileVersion>1.0.0.0</txtFileVersion>
+                                <fileDescription>Gerenciador de Medalhas</fileDescription>
+                                <copyright>Your Organization</copyright>
+                                <productVersion>1.0.0.0</productVersion>
+                                <txtProductVersion>1.0.0.0</txtProductVersion>
+                                <productName>Gerenciador de Medalhas</productName>
+                                <internalName>gerenciador-medalhas</internalName>
+                                <originalFilename>gerenciador-medalhas.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.singhs-apps</groupId>
+                <artifactId>nsis-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <setupScript>${basedir}/src/main/nsis/setup.nsi</setupScript>
+                    <outputFile>${project.build.directory}/gerenciador-medalhas-installer.exe</outputFile>
+                </configuration>
             </plugin>
         </plugins>
     </build>
